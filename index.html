@@ -46,16 +46,28 @@
       color: var(--hint);
       font-weight: 600;
     }
+  /* ✅ 修正後的寫法 */
+  input[type="date"] {
+    width: auto;
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d1d6;
+    font-size: 16px;
+    margin-top: 6px;
+    outline: none;
+  }
 
-    input[type="date"], input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #d1d1d6;
-      font-size: 16px;
-      margin-top: 6px;
-      outline: none;
-    }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d1d6;
+    font-size: 16px;
+    margin-top: 6px;
+    outline: none;
+  }
+
 
     .btn {
       background: var(--primary);
