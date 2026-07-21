@@ -121,7 +121,7 @@
       border-radius: 8px;
     }
 
-    /* 3. 日期輸入框文字精準垂直水平居中 */
+    /* 日期輸入框文字精準垂直水平居中 */
     input[type="date"] {
       width: auto;
       display: inline-flex;
@@ -312,7 +312,7 @@
   <!-- STEP 2: 選擇動作與管理 -->
   <div id="step2" class="step-page">
     <div class="header-bar">
-      <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetAndGoToStep1()">返回</button>
       <h2>選擇訓練動作</h2>
       <div style="width: 60px;"></div>
     </div>
@@ -332,17 +332,18 @@
   <!-- STEP 3: 填寫重量與組數 -->
   <div id="step3" class="step-page">
     <div class="header-bar">
-      <button class="btn btn-secondary btn-sm" onclick="goToStep2()">返回</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetAndGoToStep1()">返回</button>
       <h2>今日訓練菜單</h2>
       <div style="width: 60px;"></div>
     </div>
 
     <div id="workoutFormContainer"></div>
 
+    <button class="btn btn-outline" style="margin-bottom: 12px;" onclick="addTempExerciseInStep3()">＋ 臨時加練動作</button>
     <button class="btn" style="margin-bottom: 50px; background: #34c759;" onclick="saveAllLogs()">完成並儲存訓練</button>
   </div>
 
-  <!-- STEP 4: 歷史紀錄頁 (含篩選與刪除功能) -->
+  <!-- STEP 4: 歷史紀錄頁 -->
   <div id="stepHistory" class="step-page">
     <div class="header-bar">
       <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回首頁</button>
@@ -380,6 +381,20 @@
     window.scrollTo(0, 0);
   }
 
+  /* --- 重置與返回邏輯 --- */
+  function resetAndGoToStep1() {
+    selectedParts = [];
+    selectedExercises = [];
+    document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
+    document.getElementById('workoutFormContainer').innerHTML = '';
+    document.getElementById('exerciseChecklist').innerHTML = '';
+    switchPage('step1');
+  }
+
+  function goToStep1() {
+    switchPage('step1');
+  }
+
   function togglePart(element, partName) {
     const idx = selectedParts.indexOf(partName);
     if (idx > -1) {
@@ -389,10 +404,6 @@
       selectedParts.push(partName);
       element.classList.add('active');
     }
-  }
-
-  function goToStep1() {
-    switchPage('step1');
   }
 
   function goToStep2() {
@@ -506,41 +517,92 @@
     const container = document.getElementById('workoutFormContainer');
     container.innerHTML = '';
 
-    selectedExercises.forEach((ex, exIndex) => {
-      const { lastLog, alertMessage } = getExerciseHistory(ex);
-
-      let historyHTML = lastLog 
-        ? `<div class="history-box">上次紀錄 (${lastLog.date})：<br>` + 
-          lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join(' | ') + `</div>`
-        : `<div class="history-box">尚未有此動作歷史紀錄</div>`;
-
-      let alertHTML = alertMessage ? `<div class="alert-box">${alertMessage}</div>` : '';
-
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.id = `ex-card-${exIndex}`;
-      card.innerHTML = `
-        <h3 style="margin: 0 0 8px 0;">${ex}</h3>
-        ${historyHTML}
-        ${alertHTML}
-        
-        <div id="sets-container-${exIndex}">
-          <div class="set-row">
-            <span>第 1 組</span>
-            <input type="number" placeholder="重量 kg" class="weight-input" value="${lastLog?.sets[0]?.weight || ''}">
-            <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastLog?.sets[0]?.reps || ''}">
-          </div>
-        </div>
-
-        <button class="btn btn-secondary btn-sm" onclick="addSetRow(${exIndex})" style="margin-top: 10px;">＋ 新增一組</button>
-      `;
-
-      container.appendChild(card);
+    selectedExercises.forEach((ex) => {
+      renderSingleExerciseCard(container, ex);
     });
   }
 
-  function addSetRow(exIndex) {
-    const setsContainer = document.getElementById(`sets-container-${exIndex}`);
+  // 渲染單個動作卡片
+  function renderSingleExerciseCard(container, ex) {
+    const cardId = `ex-card-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+    const { lastLog, alertMessage } = getExerciseHistory(ex);
+
+    let historyHTML = lastLog 
+      ? `<div class="history-box">上次紀錄 (${lastLog.date})：<br>` + 
+        lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join(' | ') + `</div>`
+      : `<div class="history-box">尚未有此動作歷史紀錄</div>`;
+
+    let alertHTML = alertMessage ? `<div class="alert-box">${alertMessage}</div>` : '';
+
+    const card = document.createElement('div');
+    card.className = 'card workout-ex-card';
+    card.setAttribute('data-ex-name', ex);
+    card.id = cardId;
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0;">${ex}</h3>
+        <button class="btn btn-danger-outline btn-sm" onclick="removeExerciseCard('${cardId}', '${ex}')">移除</button>
+      </div>
+      ${historyHTML}
+      ${alertHTML}
+      
+      <div class="sets-container">
+        <div class="set-row">
+          <span>第 1 組</span>
+          <input type="number" placeholder="重量 kg" class="weight-input" value="${lastLog?.sets[0]?.weight || ''}">
+          <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastLog?.sets[0]?.reps || ''}">
+        </div>
+      </div>
+
+      <button class="btn btn-secondary btn-sm" onclick="addSetRow('${cardId}')" style="margin-top: 10px;">＋ 新增一組</button>
+    `;
+
+    container.appendChild(card);
+  }
+
+  // 在 Step 3 移除單個動作卡片
+  function removeExerciseCard(cardId, exName) {
+    if (confirm(`確定要從今日菜單移除「${exName}」嗎？`)) {
+      const card = document.getElementById(cardId);
+      if (card) card.remove();
+      const idx = selectedExercises.indexOf(exName);
+      if (idx > -1) selectedExercises.splice(idx, 1);
+    }
+  }
+
+  // 在 Step 3 臨時加練動作
+  function addTempExerciseInStep3() {
+    let availableExercises = [];
+    selectedParts.forEach(p => {
+      if (customLibrary[p]) availableExercises.push(...customLibrary[p]);
+    });
+
+    if (availableExercises.length === 0) {
+      Object.keys(customLibrary).forEach(p => availableExercises.push(...customLibrary[p]));
+    }
+
+    const unselected = availableExercises.filter(ex => !selectedExercises.includes(ex));
+
+    let exName = '';
+    if (unselected.length > 0) {
+      exName = prompt(`請輸入或選擇要加練的動作名稱：\n(建議可選：${unselected.join(', ')})`);
+    } else {
+      exName = prompt('請輸入要加練的動作名稱：');
+    }
+
+    if (exName && exName.trim() !== '') {
+      exName = exName.trim();
+      if (!selectedExercises.includes(exName)) {
+        selectedExercises.push(exName);
+      }
+      const container = document.getElementById('workoutFormContainer');
+      renderSingleExerciseCard(container, exName);
+    }
+  }
+
+  function addSetRow(cardId) {
+    const card = document.getElementById(cardId);
+    const setsContainer = card.querySelector('.sets-container');
     const currentSets = setsContainer.querySelectorAll('.set-row').length + 1;
 
     const newRow = document.createElement('div');
@@ -556,9 +618,15 @@
   function saveAllLogs() {
     const date = document.getElementById('workoutDate').value;
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+    const cards = document.querySelectorAll('.workout-ex-card');
 
-    selectedExercises.forEach((ex, exIndex) => {
-      const card = document.getElementById(`ex-card-${exIndex}`);
+    if (cards.length === 0) {
+      alert('請先新增至少一個動作！');
+      return;
+    }
+
+    cards.forEach(card => {
+      const ex = card.getAttribute('data-ex-name');
       const setRows = card.querySelectorAll('.set-row');
       const setsData = [];
 
@@ -577,10 +645,9 @@
 
     localStorage.setItem('gym_logs', JSON.stringify(allLogs));
     alert('儲存成功！');
-    location.reload();
+    resetAndGoToStep1();
   }
 
-  // 顯示歷史紀錄頁與設置篩選器
   function showHistoryPage() {
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
     const select = document.getElementById('historyFilterSelect');
@@ -598,7 +665,6 @@
     switchPage('stepHistory');
   }
 
-  // 渲染歷史紀錄 (含動作篩選與刪除紀錄)
   function renderHistoryLogs() {
     const container = document.getElementById('historyLogsContainer');
     const filterValue = document.getElementById('historyFilterSelect').value;
@@ -642,7 +708,6 @@
     container.innerHTML = html;
   }
 
-  // 刪除單筆歷史紀錄
   function deleteHistoryLog(logId) {
     if (confirm('確定要刪除這筆訓練紀錄嗎？')) {
       let allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
