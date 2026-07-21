@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>健身紀錄器</title>
+  <style>
+    :root {
+      --primary: #007aff;
+      --bg: #f2f2f7;
+      --card: #ffffff;
+      --text: #1c1c1e;
+      --hint: #8e8e93;
+      --border: #e5e5ea;
+    }
+    
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    h2, h3, h4 {
+      margin: 0 0 12px 0;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--hint);
+      font-weight: 600;
+    }
+
+    input[type="date"], input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d1d6;
+      font-size: 16px;
+      margin-top: 6px;
+      outline: none;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 12px;
+      font-size: 16px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.7;
+    }
+
+    .btn-secondary {
+      background: #e5e5ea;
+      color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 13px;
+      width: auto;
+      margin-top: 0;
+    }
+
+    /* 1. 部位選擇按鈕 (Chips) */
+    .chip-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .chip {
+      padding: 12px 20px;
+      border-radius: 22px;
+      background: #e5e5ea;
+      cursor: pointer;
+      user-select: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: #3a3a3c;
+      transition: all 0.2s ease;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* 2. 動作勾選網格 */
+    .exercise-select-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f9f9fb;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+    }
+
+    /* 3. 歷史紀錄與提醒卡片 */
+    .history-box {
+      background: #f2f2f7;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .alert-box {
+      background: #fff9e6;
+      border: 1px solid #ffe58f;
+      color: #8a6d3b;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    /* 4. 逐組紀錄行 */
+    .set-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .set-row span {
+      width: 60px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--hint);
+    }
+
+    .set-row input {
+      margin-top: 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部卡片：日期與部位選擇 -->
+  <div class="card">
+    <h2>📅 健身訓練紀錄</h2>
+    <div>
+      <label>訓練日期</label>
+      <input type="date" id="workoutDate">
+    </div>
+
+    <div style="margin-top: 20px;">
+      <label>1. 選擇今日訓練部位（可複選）</label>
+      <div class="chip-group" id="bodyPartGroup">
+        <div class="chip" onclick="togglePart(this, '胸')">胸</div>
+        <div class="chip" onclick="togglePart(this, '背')">背</div>
+        <div class="chip" onclick="togglePart(this, '腿')">腿</div>
+        <div class="chip" onclick="togglePart(this, '手')">手</div>
+      </div>
+    </div>
+
+    <!-- 動態動作勾選區 -->
+    <div id="exerciseSelectionSection" style="margin-top: 20px; display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>2. 勾選這次要練的動作</label>
+        <button class="btn btn-secondary btn-sm" onclick="addNewExercise()">＋ 新增自訂動作</button>
+      </div>
+      <div class="exercise-select-grid" id="exerciseChecklist"></div>
+      <button class="btn" onclick="generateWorkoutMenu()">生成訓練菜單 🚀</button>
+    </div>
+  </div>
+
+  <!-- 今日訓練填寫區 -->
+  <div id="workoutFormContainer"></div>
+
+<script>
+  // 預設庫與自訂動作資料庫 (儲存於 localStorage)
+  const defaultLibrary = {
+    '胸': ['槓鈴臥推', '啞鈴上斜臥推', '雙槓體撐', '繩索飛鳥'],
+    '背': ['滑輪下拉', '滑輪划船', '槓鈴划船', '引體向上'],
+    '腿': ['槓鈴深蹲', '腿推舉', '羅馬尼亞硬舉', '機械腿彎舉'],
+    '手': ['啞鈴彎舉', '纜繩下壓', '槓鈴彎舉', '三頭肌伸展']
+  };
+
+  let customLibrary = JSON.parse(localStorage.getItem('gym_library')) || defaultLibrary;
+  let selectedParts = [];
+  let selectedExercises = [];
+
+  // 自動抓取當天日期
+  document.getElementById('workoutDate').valueAsDate = new Date();
+
+  // 1. 部位點擊切換
+  function togglePart(element, partName) {
+    const idx = selectedParts.indexOf(partName);
+    if (idx > -1) {
+      selectedParts.splice(idx, 1);
+      element.classList.remove('active');
+    } else {
+      selectedParts.push(partName);
+      element.classList.add('active');
+    }
+    renderExerciseChecklist();
+  }
+
+  // 2. 渲染動作勾選選單
+  function renderExerciseChecklist() {
+    const section = document.getElementById('exerciseSelectionSection');
+    const container = document.getElementById('exerciseChecklist');
+
+    if (selectedParts.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = '';
+
+    selectedParts.forEach(part => {
+      const exercises = customLibrary[part] || [];
+      exercises.forEach(ex => {
+        const isChecked = selectedExercises.includes(ex);
+        const label = document.createElement('label');
+        label.className = 'checkbox-label';
+        label.innerHTML = `
+          <input type="checkbox" value="${ex}" ${isChecked ? 'checked' : ''} onchange="toggleExercise('${ex}')">
+          <span>[${part}] ${ex}</span>
+        `;
+        container.appendChild(label);
+      });
+    });
+  }
+
+  // 3. 動作選擇切換
+  function toggleExercise(exName) {
+    const idx = selectedExercises.indexOf(exName);
+    if (idx > -1) {
+      selectedExercises.splice(idx, 1);
+    } else {
+      selectedExercises.push(exName);
+    }
+  }
+
+  // 4. 新增自訂動作
+  function addNewExercise() {
+    if (selectedParts.length === 0) {
+      alert('請先選擇至少一個部位！');
+      return;
+    }
+    const part = prompt(`請輸入要新增至哪個部位 (${selectedParts.join(', ')}):`, selectedParts[0]);
+    if (!part || !selectedParts.includes(part)) return;
+
+    const exName = prompt(`請輸入「${part}」的新動作名稱:`);
+    if (exName) {
+      if (!customLibrary[part]) customLibrary[part] = [];
+      customLibrary[part].push(exName);
+      localStorage.setItem('gym_library', JSON.stringify(customLibrary));
+      selectedExercises.push(exName);
+      renderExerciseChecklist();
+    }
+  }
+
+  // 5. 抓取上次歷史紀錄與檢測 3 次平台期
+  function getExerciseHistory(exName) {
+    const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+    const history = allLogs.filter(log => log.exercise === exName).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    if (history.length === 0) return { lastLog: null, alertMessage: null };
+
+    const lastLog = history[0];
+    let alertMessage = null;
+
+    if (history.length >= 3) {
+      const h1 = JSON.stringify(history[0].sets.map(s => `${s.weight}-${s.reps}`));
+      const h2 = JSON.stringify(history[1].sets.map(s => `${s.weight}-${s.reps}`));
+      const h3 = JSON.stringify(history[2].sets.map(s => `${s.weight}-${s.reps}`));
+
+      if (h1 === h2 && h2 === h3) {
+        alertMessage = `💡 **突破提醒**：你已連續 3 次採用相同重量/次數 (${history[0].sets[0]?.weight || 0}kg)！今天建議增加 1~2kg 或每組多做 1~2 下來刺激肌肉成長！`;
+      }
+    }
+
+    return { lastLog, alertMessage };
+  }
+
+  // 6. 生成訓練菜單卡片
+  function generateWorkoutMenu() {
+    const container = document.getElementById('workoutFormContainer');
+    if (selectedExercises.length === 0) {
+      alert('請先勾選至少一個動作！');
+      return;
+    }
+
+    container.innerHTML = '';
+
+    selectedExercises.forEach((ex, exIndex) => {
+      const { lastLog, alertMessage } = getExerciseHistory(ex);
+
+      let historyHTML = lastLog 
+        ? `<div class="history-box">📜 <strong>上次紀錄 (${lastLog.date})</strong>：<br>` + 
+          lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join(' | ') + `</div>`
+        : `<div class="history-box">📜 上次紀錄：尚無歷史紀錄，今天首開新篇章！</div>`;
+
+      let alertHTML = alertMessage ? `<div class="alert-box">${alertMessage}</div>` : '';
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `ex-card-${exIndex}`;
+      card.innerHTML = `
+        <h4>🏋️ ${ex}</h4>
+        ${historyHTML}
+        ${alertHTML}
+        
+        <div id="sets-container-${exIndex}">
+          <div class="set-row">
+            <span>第 1 組</span>
+            <input type="number" placeholder="重量 kg" class="weight-input" value="${lastLog?.sets[0]?.weight || ''}">
+            <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastLog?.sets[0]?.reps || ''}">
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="addSetRow(${exIndex})" style="margin-top: 10px;">＋ 新增一組</button>
+      `;
+
+      container.appendChild(card);
+    });
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.style.cssText = 'margin-bottom: 50px; background: #34c759;';
+    saveBtn.innerText = '完成並儲存今天訓練 🎉';
+    saveBtn.onclick = saveAllLogs;
+    container.appendChild(saveBtn);
+  }
+
+  // 7. 動態新增一組
+  function addSetRow(exIndex) {
+    const setsContainer = document.getElementById(`sets-container-${exIndex}`);
+    const currentSets = setsContainer.querySelectorAll('.set-row').length + 1;
+    
+    const lastWeight = setsContainer.querySelector('.set-row:last-child .weight-input')?.value || '';
+    const lastReps = setsContainer.querySelector('.set-row:last-child .reps-input')?.value || '';
+
+    const newRow = document.createElement('div');
+    newRow.className = 'set-row';
+    newRow.innerHTML = `
+      <span>第 ${currentSets} 組</span>
+      <input type="number" placeholder="重量 kg" class="weight-input" value="${lastWeight}">
+      <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastReps}">
+    `;
+    setsContainer.appendChild(newRow);
+  }
+
+  // 8. 儲存至 localStorage
+  function saveAllLogs() {
+    const date = document.getElementById('workoutDate').value;
+    const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+
+    selectedExercises.forEach((ex, exIndex) => {
+      const card = document.getElementById(`ex-card-${exIndex}`);
+      const setRows = card.querySelectorAll('.set-row');
+      const setsData = [];
+
+      setRows.forEach(row => {
+        const weight = parseFloat(row.querySelector('.weight-input').value) || 0;
+        const reps = parseFloat(row.querySelector('.reps-input').value) || 0;
+        if (weight > 0 || reps > 0) {
+          setsData.push({ weight, reps });
+        }
+      });
+
+      if (setsData.length > 0) {
+        allLogs.push({ date, exercise: ex, sets: setsData });
+      }
+    });
+
+    localStorage.setItem('gym_logs', JSON.stringify(allLogs));
+    alert('儲存成功！今天辛苦了！💪');
+    location.reload();
+  }
+</script>
+</body>
+</html>
