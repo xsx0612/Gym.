@@ -12,6 +12,7 @@
       --text: #1c1c1e;
       --hint: #8e8e93;
       --border: #e5e5ea;
+      --danger: #ff3b30;
     }
     
     * {
@@ -24,7 +25,7 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 16px;
       max-width: 650px;
       margin: 0 auto;
     }
@@ -33,12 +34,21 @@
       background: var(--card);
       border-radius: 16px;
       padding: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
 
-    h2, h3, h4 {
-      margin: 0 0 12px 0;
+    /* 頂部導覽與標題 */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .header-bar h2 {
+      margin: 0;
+      font-size: 20px;
     }
 
     label {
@@ -46,41 +56,25 @@
       color: var(--hint);
       font-weight: 600;
     }
-  /* ✅ 修正後的寫法 */
-  input[type="date"] {
-    width: auto;
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d1d6;
-    font-size: 16px;
-    margin-top: 6px;
-    outline: none;
-  }
 
-  input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d1d6;
-    font-size: 16px;
-    margin-top: 6px;
-    outline: none;
-  }
-
-
+    /* 1. 按鈕視覺全面優化 (Flexbox 完美居中) */
     .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: var(--primary);
       color: white;
       border: none;
-      padding: 14px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      height: 48px;
+      padding: 0 20px;
+      border-radius: 12px;
+      font-weight: 600;
       cursor: pointer;
       width: 100%;
       margin-top: 12px;
       font-size: 16px;
       transition: opacity 0.2s;
+      text-align: center;
     }
 
     .btn:active {
@@ -92,23 +86,75 @@
       color: var(--text);
     }
 
-    .btn-sm {
-      padding: 8px 14px;
-      font-size: 13px;
-      width: auto;
-      margin-top: 0;
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
     }
 
-    /* 1. 部位選擇按鈕 (Chips) */
+    .btn-sm {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 14px;
+      width: auto;
+      margin-top: 0;
+      border-radius: 8px;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: var(--hint);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-icon:hover {
+      color: var(--danger);
+    }
+
+    /* 日期輸入框大小剛好包裹文字 */
+    input[type="date"] {
+      width: auto;
+      display: inline-block;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d1d6;
+      font-size: 16px;
+      margin-top: 8px;
+      outline: none;
+      background: var(--card);
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d1d6;
+      font-size: 16px;
+      outline: none;
+    }
+
+    /* 部位選擇按鈕 (Chips) */
     .chip-group {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .chip {
-      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 20px;
       border-radius: 22px;
       background: #e5e5ea;
       cursor: pointer;
@@ -124,34 +170,39 @@
       color: white;
     }
 
-    /* 2. 動作勾選網格 */
-    .exercise-select-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    /* 動作選擇卡片列表 */
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       margin-top: 12px;
     }
 
-    .checkbox-label {
+    .exercise-item {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       background: #f9f9fb;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 12px 16px;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
     }
 
-    .checkbox-label input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
+    .exercise-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .exercise-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
       accent-color: var(--primary);
     }
 
-    /* 3. 歷史紀錄與提醒卡片 */
+    /* 歷史紀錄與提醒卡片 */
     .history-box {
       background: #f2f2f7;
       border-radius: 10px;
@@ -169,10 +220,9 @@
       padding: 12px;
       margin: 10px 0;
       font-size: 14px;
-      line-height: 1.4;
     }
 
-    /* 4. 逐組紀錄行 */
+    /* 逐組填寫列 */
     .set-row {
       display: flex;
       gap: 10px;
@@ -181,54 +231,101 @@
     }
 
     .set-row span {
-      width: 60px;
+      width: 55px;
       font-weight: 600;
       font-size: 14px;
       color: var(--hint);
     }
 
     .set-row input {
-      margin-top: 0;
       text-align: center;
+    }
+
+    /* 分頁顯示控制 */
+    .step-page {
+      display: none;
+    }
+
+    .step-page.active {
+      display: block;
     }
   </style>
 </head>
 <body>
 
-  <!-- 頂部卡片：日期與部位選擇 -->
-  <div class="card">
-    <h2>📅 健身訓練紀錄</h2>
-    <div>
-      <label>訓練日期</label>
-      <input type="date" id="workoutDate">
+  <!-- STEP 1: 選擇日期與部位 -->
+  <div id="step1" class="step-page active">
+    <div class="header-bar">
+      <h2>📅 健身訓練紀錄</h2>
+      <button class="btn btn-secondary btn-sm" onclick="showHistoryPage()">📜 歷史紀錄</button>
     </div>
 
-    <div style="margin-top: 20px;">
-      <label>1. 選擇今日訓練部位（可複選）</label>
-      <div class="chip-group" id="bodyPartGroup">
-        <div class="chip" onclick="togglePart(this, '胸')">胸</div>
-        <div class="chip" onclick="togglePart(this, '背')">背</div>
-        <div class="chip" onclick="togglePart(this, '腿')">腿</div>
-        <div class="chip" onclick="togglePart(this, '手')">手</div>
+    <div class="card">
+      <div>
+        <label>訓練日期</label><br>
+        <input type="date" id="workoutDate">
       </div>
-    </div>
 
-    <!-- 動態動作勾選區 -->
-    <div id="exerciseSelectionSection" style="margin-top: 20px; display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>2. 勾選這次要練的動作</label>
-        <button class="btn btn-secondary btn-sm" onclick="addNewExercise()">＋ 新增自訂動作</button>
+      <div style="margin-top: 20px;">
+        <label>1. 選擇今日訓練部位（可複選）</label>
+        <div class="chip-group" id="bodyPartGroup">
+          <div class="chip" onclick="togglePart(this, '胸')">胸</div>
+          <div class="chip" onclick="togglePart(this, '背')">背</div>
+          <div class="chip" onclick="togglePart(this, '腿')">腿</div>
+          <div class="chip" onclick="togglePart(this, '手')">手</div>
+        </div>
       </div>
-      <div class="exercise-select-grid" id="exerciseChecklist"></div>
-      <button class="btn" onclick="generateWorkoutMenu()">生成訓練菜單 🚀</button>
+
+      <button class="btn" style="margin-top: 24px;" onclick="goToStep2()">下一步：選擇動作 ➔</button>
     </div>
   </div>
 
-  <!-- 今日訓練填寫區 -->
-  <div id="workoutFormContainer"></div>
+  <!-- STEP 2: 勾選與管理動作 -->
+  <div id="step2" class="step-page">
+    <div class="header-bar">
+      <button class="btn btn-secondary btn-sm" onclick="goToStep1()">‹ 返回</button>
+      <h2>🎯 選擇訓練動作</h2>
+      <div style="width: 60px;"></div>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>勾選要執行的動作</label>
+        <button class="btn btn-outline btn-sm" onclick="addNewExercise()">＋ 新增動作</button>
+      </div>
+
+      <div class="exercise-list" id="exerciseChecklist"></div>
+
+      <button class="btn" style="margin-top: 24px;" onclick="goToStep3()">下一步：開始填寫菜單 🚀</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: 填寫重量組數 -->
+  <div id="step3" class="step-page">
+    <div class="header-bar">
+      <button class="btn btn-secondary btn-sm" onclick="goToStep2()">‹ 返回</button>
+      <h2>🏋️ 今日訓練菜單</h2>
+      <div style="width: 60px;"></div>
+    </div>
+
+    <div id="workoutFormContainer"></div>
+
+    <button class="btn" style="margin-bottom: 50px; background: #34c759;" onclick="saveAllLogs()">完成並儲存訓練 🎉</button>
+  </div>
+
+  <!-- STEP 4: 獨立歷史紀錄頁 -->
+  <div id="stepHistory" class="step-page">
+    <div class="header-bar">
+      <button class="btn btn-secondary btn-sm" onclick="goToStep1()">‹ 返回首頁</button>
+      <h2>📜 過去訓練紀錄</h2>
+      <div style="width: 60px;"></div>
+    </div>
+
+    <div id="historyLogsContainer"></div>
+  </div>
 
 <script>
-  // 預設庫與自訂動作資料庫 (儲存於 localStorage)
+  // 預設與自訂動作資料庫
   const defaultLibrary = {
     '胸': ['槓鈴臥推', '啞鈴上斜臥推', '雙槓體撐', '繩索飛鳥'],
     '背': ['滑輪下拉', '滑輪划船', '槓鈴划船', '引體向上'],
@@ -240,10 +337,17 @@
   let selectedParts = [];
   let selectedExercises = [];
 
-  // 自動抓取當天日期
+  // 初始化日期
   document.getElementById('workoutDate').valueAsDate = new Date();
 
-  // 1. 部位點擊切換
+  // 切換頁面函式
+  function switchPage(pageId) {
+    document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // 部位點擊
   function togglePart(element, partName) {
     const idx = selectedParts.indexOf(partName);
     if (idx > -1) {
@@ -253,40 +357,54 @@
       selectedParts.push(partName);
       element.classList.add('active');
     }
-    renderExerciseChecklist();
   }
 
-  // 2. 渲染動作勾選選單
-  function renderExerciseChecklist() {
-    const section = document.getElementById('exerciseSelectionSection');
-    const container = document.getElementById('exerciseChecklist');
+  // 到 Step 1
+  function goToStep1() {
+    switchPage('step1');
+  }
 
+  // 到 Step 2
+  function goToStep2() {
     if (selectedParts.length === 0) {
-      section.style.display = 'none';
+      alert('請先選擇至少一個部位！');
       return;
     }
+    renderExerciseChecklist();
+    switchPage('step2');
+  }
 
-    section.style.display = 'block';
+  // 渲染 Step 2 動作選單
+  function renderExerciseChecklist() {
+    const container = document.getElementById('exerciseChecklist');
     container.innerHTML = '';
 
     selectedParts.forEach(part => {
       const exercises = customLibrary[part] || [];
       exercises.forEach(ex => {
         const isChecked = selectedExercises.includes(ex);
-        const label = document.createElement('label');
-        label.className = 'checkbox-label';
-        label.innerHTML = `
-          <input type="checkbox" value="${ex}" ${isChecked ? 'checked' : ''} onchange="toggleExercise('${ex}')">
-          <span>[${part}] ${ex}</span>
+        const item = document.createElement('div');
+        item.className = 'exercise-item';
+        item.innerHTML = `
+          <div class="exercise-item-left" onclick="toggleExercise('${ex}', this)">
+            <input type="checkbox" value="${ex}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleExercise('${ex}')">
+            <span style="font-weight: 600;">[${part}] ${ex}</span>
+          </div>
+          <button class="btn-icon" onclick="deleteExercise('${part}', '${ex}')">🗑️</button>
         `;
-        container.appendChild(label);
+        container.appendChild(item);
       });
     });
   }
 
-  // 3. 動作選擇切換
-  function toggleExercise(exName) {
+  // 切換動作選擇
+  function toggleExercise(exName, parentEl) {
     const idx = selectedExercises.indexOf(exName);
+    if (parentEl) {
+      const chk = parentEl.querySelector('input[type="checkbox"]');
+      chk.checked = !chk.checked;
+    }
+    
     if (idx > -1) {
       selectedExercises.splice(idx, 1);
     } else {
@@ -294,26 +412,49 @@
     }
   }
 
-  // 4. 新增自訂動作
+  // 聰明新增動作 (自動綁定已選部位)
   function addNewExercise() {
-    if (selectedParts.length === 0) {
-      alert('請先選擇至少一個部位！');
-      return;
+    let targetPart = selectedParts[0];
+    if (selectedParts.length > 1) {
+      const partChoice = prompt(`你要新增至哪個部位？ (${selectedParts.join(', ')})`, selectedParts[0]);
+      if (!partChoice || !selectedParts.includes(partChoice)) return;
+      targetPart = partChoice;
     }
-    const part = prompt(`請輸入要新增至哪個部位 (${selectedParts.join(', ')}):`, selectedParts[0]);
-    if (!part || !selectedParts.includes(part)) return;
 
-    const exName = prompt(`請輸入「${part}」的新動作名稱:`);
-    if (exName) {
-      if (!customLibrary[part]) customLibrary[part] = [];
-      customLibrary[part].push(exName);
+    const exName = prompt(`請輸入要在「${targetPart}」新增的動作名稱:`);
+    if (exName && exName.trim() !== '') {
+      if (!customLibrary[targetPart]) customLibrary[targetPart] = [];
+      customLibrary[targetPart].push(exName.trim());
       localStorage.setItem('gym_library', JSON.stringify(customLibrary));
-      selectedExercises.push(exName);
+      selectedExercises.push(exName.trim());
       renderExerciseChecklist();
     }
   }
 
-  // 5. 抓取上次歷史紀錄與檢測 3 次平台期
+  // 刪除動作
+  function deleteExercise(part, exName) {
+    if (confirm(`確定要刪除「${exName}」這個動作嗎？`)) {
+      customLibrary[part] = customLibrary[part].filter(e => e !== exName);
+      localStorage.setItem('gym_library', JSON.stringify(customLibrary));
+      
+      const idx = selectedExercises.indexOf(exName);
+      if (idx > -1) selectedExercises.splice(idx, 1);
+      
+      renderExerciseChecklist();
+    }
+  }
+
+  // 到 Step 3
+  function goToStep3() {
+    if (selectedExercises.length === 0) {
+      alert('請先勾選至少一個動作！');
+      return;
+    }
+    generateWorkoutMenu();
+    switchPage('step3');
+  }
+
+  // 抓取歷史與 3 次提示
   function getExerciseHistory(exName) {
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
     const history = allLogs.filter(log => log.exercise === exName).sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -329,30 +470,25 @@
       const h3 = JSON.stringify(history[2].sets.map(s => `${s.weight}-${s.reps}`));
 
       if (h1 === h2 && h2 === h3) {
-        alertMessage = `💡 **突破提醒**：你已連續 3 次採用相同重量/次數 (${history[0].sets[0]?.weight || 0}kg)！今天建議增加 1~2kg 或每組多做 1~2 下來刺激肌肉成長！`;
+        alertMessage = `💡 突破提醒：你已連續 3 次採用相同配置 (${history[0].sets[0]?.weight || 0}kg)！今天建議嘗試增加 1~2kg！`;
       }
     }
 
     return { lastLog, alertMessage };
   }
 
-  // 6. 生成訓練菜單卡片
+  // 生成 Step 3 菜單
   function generateWorkoutMenu() {
     const container = document.getElementById('workoutFormContainer');
-    if (selectedExercises.length === 0) {
-      alert('請先勾選至少一個動作！');
-      return;
-    }
-
     container.innerHTML = '';
 
     selectedExercises.forEach((ex, exIndex) => {
       const { lastLog, alertMessage } = getExerciseHistory(ex);
 
       let historyHTML = lastLog 
-        ? `<div class="history-box">📜 <strong>上次紀錄 (${lastLog.date})</strong>：<br>` + 
+        ? `<div class="history-box">📜 上次紀錄 (${lastLog.date})：<br>` + 
           lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join(' | ') + `</div>`
-        : `<div class="history-box">📜 上次紀錄：尚無歷史紀錄，今天首開新篇章！</div>`;
+        : `<div class="history-box">📜 尚未有此動作歷史紀錄！</div>`;
 
       let alertHTML = alertMessage ? `<div class="alert-box">${alertMessage}</div>` : '';
 
@@ -360,7 +496,7 @@
       card.className = 'card';
       card.id = `ex-card-${exIndex}`;
       card.innerHTML = `
-        <h4>🏋️ ${ex}</h4>
+        <h3 style="margin: 0 0 8px 0;">🏋️ ${ex}</h3>
         ${historyHTML}
         ${alertHTML}
         
@@ -377,34 +513,24 @@
 
       container.appendChild(card);
     });
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'btn';
-    saveBtn.style.cssText = 'margin-bottom: 50px; background: #34c759;';
-    saveBtn.innerText = '完成並儲存今天訓練 🎉';
-    saveBtn.onclick = saveAllLogs;
-    container.appendChild(saveBtn);
   }
 
-  // 7. 動態新增一組
+  // 新增一組 (數字完全留空，不自動帶入)
   function addSetRow(exIndex) {
     const setsContainer = document.getElementById(`sets-container-${exIndex}`);
     const currentSets = setsContainer.querySelectorAll('.set-row').length + 1;
-    
-    const lastWeight = setsContainer.querySelector('.set-row:last-child .weight-input')?.value || '';
-    const lastReps = setsContainer.querySelector('.set-row:last-child .reps-input')?.value || '';
 
     const newRow = document.createElement('div');
     newRow.className = 'set-row';
     newRow.innerHTML = `
       <span>第 ${currentSets} 組</span>
-      <input type="number" placeholder="重量 kg" class="weight-input" value="${lastWeight}">
-      <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastReps}">
+      <input type="number" placeholder="重量 kg" class="weight-input" value="">
+      <input type="number" placeholder="次數 Reps" class="reps-input" value="">
     `;
     setsContainer.appendChild(newRow);
   }
 
-  // 8. 儲存至 localStorage
+  // 儲存紀錄
   function saveAllLogs() {
     const date = document.getElementById('workoutDate').value;
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
@@ -428,8 +554,46 @@
     });
 
     localStorage.setItem('gym_logs', JSON.stringify(allLogs));
-    alert('儲存成功！今天辛苦了！💪');
+    alert('儲存成功！訓練辛苦了！💪');
     location.reload();
+  }
+
+  // 顯示獨立歷史紀錄頁
+  function showHistoryPage() {
+    const container = document.getElementById('historyLogsContainer');
+    const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+
+    if (allLogs.length === 0) {
+      container.innerHTML = `<div class="card"><p style="text-align:center; color:var(--hint);">目前尚無訓練紀錄！</p></div>`;
+      switchPage('stepHistory');
+      return;
+    }
+
+    // 按日期群組排序
+    const groupedLogs = {};
+    allLogs.forEach(log => {
+      if (!groupedLogs[log.date]) groupedLogs[log.date] = [];
+      groupedLogs[log.date].push(log);
+    });
+
+    const sortedDates = Object.keys(groupedLogs).sort((a,b) => new Date(b) - new Date(a));
+
+    let html = '';
+    sortedDates.forEach(date => {
+      html += `<div class="card"><h3 style="margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px;">📅 ${date}</h3>`;
+      groupedLogs[date].forEach(item => {
+        html += `<div style="margin-bottom: 10px;">
+          <strong>🏋️ ${item.exercise}</strong>
+          <div style="font-size: 14px; color: #48484a; margin-top: 4px;">
+            ${item.sets.map((s, i) => `組 ${i+1}: ${s.weight}kg × ${s.reps}下`).join(' | ')}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    container.innerHTML = html;
+    switchPage('stepHistory');
   }
 </script>
 </body>
