@@ -62,12 +62,14 @@
 
     .header-bar h2 {
       margin: 0;
-      font-size: 20px;
+      font-size: 22px;
     }
 
-    .header-btns {
+    .card-header-bar {
       display: flex;
-      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
     label {
@@ -94,6 +96,7 @@
       font-size: 16px;
       transition: opacity 0.2s;
       text-align: center;
+      white-space: nowrap;
     }
 
     .btn:active {
@@ -115,6 +118,8 @@
       background: transparent;
       border: 1px solid var(--danger);
       color: var(--danger);
+      white-space: nowrap; /* 確保「刪除」兩個字不折行 */
+      word-break: keep-all;
     }
 
     .btn-sm {
@@ -124,6 +129,7 @@
       width: auto;
       margin-top: 0;
       border-radius: 8px;
+      white-space: nowrap;
     }
 
     /* 日期與數字輸入框 */
@@ -133,11 +139,11 @@
       align-items: center;
       justify-content: center;
       height: 44px;
-      padding: 0 16px;
+      padding: 0 12px;
       border-radius: 10px;
       border: 1px solid #d1d1d6;
-      font-size: 16px;
-      margin-top: 8px;
+      font-size: 15px;
+      margin-top: 6px;
       outline: none;
       background: var(--card);
       color: var(--text);
@@ -151,7 +157,7 @@
       padding: 0 12px;
       border-radius: 10px;
       border: 1px solid #d1d1d6;
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
       background: var(--card);
     }
@@ -169,7 +175,8 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 8px;
+      margin-bottom: 16px;
       text-align: center;
     }
 
@@ -328,8 +335,8 @@
     .inbody-input-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
+      gap: 8px;
+      margin-top: 8px;
     }
 
     /* 歷史紀錄條目樣式 */
@@ -353,24 +360,25 @@
     .history-sets-list {
       font-size: 14px;
       color: #48484a;
-      line-height: 1.6;
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
 
-  <!-- STEP 1: 選擇日期與部位 + 下方獨立 InBody 卡片 -->
+  <!-- STEP 1: 選擇日期與部位 + 下方獨立 InBody 卡片 (含內嵌新增) -->
   <div id="step1" class="step-page active">
     <div class="header-bar">
       <h2>健身訓練紀錄</h2>
-      <div class="header-btns">
-        <button class="btn btn-secondary btn-sm" onclick="showInbodyPage()">InBody 紀錄</button>
-        <button class="btn btn-secondary btn-sm" onclick="showHistoryPage()">歷史紀錄</button>
-      </div>
     </div>
 
-    <!-- 訓練選擇卡片 -->
+    <!-- 1. 健身訓練卡片 -->
     <div class="card">
+      <div class="card-header-bar">
+        <strong style="font-size: 18px;">健身紀錄</strong>
+        <button class="btn btn-secondary btn-sm" onclick="showHistoryPage()">歷史紀錄</button>
+      </div>
+
       <div>
         <label>訓練日期</label><br>
         <input type="date" id="workoutDate">
@@ -389,9 +397,46 @@
       <button class="btn" style="margin-top: 24px;" onclick="goToStep2()">下一步：選擇動作</button>
     </div>
 
-    <!-- 下方獨立 InBody 概況卡片 -->
-    <div class="inbody-summary-card" id="latestInbodySummary">
-      <!-- 由 JS 動態渲染 -->
+    <!-- 2. 下方獨立 InBody 概況與直接新增卡片 -->
+    <div class="inbody-summary-card">
+      <div class="card-header-bar">
+        <div>
+          <strong style="font-size: 18px;">InBody 數據</strong>
+          <span id="latestInbodyDate" style="font-size: 12px; color: var(--hint); margin-left: 6px;"></span>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="showInbodyPage()">歷史紀錄</button>
+      </div>
+
+      <!-- 最新數據展示 -->
+      <div id="latestInbodySummaryGrid">
+        <!-- JS 動態渲染最新數據 -->
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 16px 0;">
+
+      <!-- 直接新增區域 -->
+      <strong style="font-size: 15px; color: var(--text);">新增紀錄</strong>
+      <div style="margin-top: 8px;">
+        <label>量測日期</label><br>
+        <input type="date" id="inlineInbodyDate">
+      </div>
+
+      <div class="inbody-input-grid">
+        <div>
+          <label style="font-size: 12px;">體重 (kg)</label>
+          <input type="number" step="0.1" id="inlineInbodyWeight" placeholder="70.5">
+        </div>
+        <div>
+          <label style="font-size: 12px;">骨骼肌 (kg)</label>
+          <input type="number" step="0.1" id="inlineInbodySMM" placeholder="32.1">
+        </div>
+        <div>
+          <label style="font-size: 12px;">體脂率 (%)</label>
+          <input type="number" step="0.1" id="inlineInbodyPBF" placeholder="18.5">
+        </div>
+      </div>
+
+      <button class="btn btn-outline" style="margin-top: 12px; height: 42px; font-size: 15px;" onclick="saveInlineInbody()">儲存 InBody 紀錄</button>
     </div>
   </div>
 
@@ -433,7 +478,7 @@
   <div id="stepHistory" class="step-page">
     <div class="header-bar">
       <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回首頁</button>
-      <h2>歷史訓練紀錄</h2>
+      <h2>健身歷史紀錄</h2>
       <div style="width: 60px;"></div>
     </div>
 
@@ -447,36 +492,12 @@
     <div id="historyLogsContainer"></div>
   </div>
 
-  <!-- STEP 5: 獨立 InBody 紀錄專區 -->
+  <!-- STEP 5: 獨立 InBody 歷史紀錄頁 -->
   <div id="stepInbody" class="step-page">
     <div class="header-bar">
       <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回首頁</button>
-      <h2>InBody 數據管理</h2>
+      <h2>InBody 歷史紀錄</h2>
       <div style="width: 60px;"></div>
-    </div>
-
-    <!-- 新增 InBody 數據卡片 -->
-    <div class="card">
-      <h3 style="margin: 0 0 12px 0;">新增 InBody 紀錄</h3>
-      <label>量測日期</label><br>
-      <input type="date" id="inbodyRecordDate">
-
-      <div class="inbody-input-grid">
-        <div>
-          <label>體重 (kg)</label>
-          <input type="number" step="0.1" id="inbodyWeight" placeholder="例如: 70.5">
-        </div>
-        <div>
-          <label>骨骼肌 (kg)</label>
-          <input type="number" step="0.1" id="inbodySMM" placeholder="例如: 32.1">
-        </div>
-        <div>
-          <label>體脂率 (%)</label>
-          <input type="number" step="0.1" id="inbodyPBF" placeholder="例如: 18.5">
-        </div>
-      </div>
-
-      <button class="btn" style="margin-top: 16px;" onclick="saveInbodyRecord()">儲存 InBody 紀錄</button>
     </div>
 
     <!-- InBody 歷史列表 -->
@@ -496,7 +517,7 @@
   let selectedExercises = [];
 
   document.getElementById('workoutDate').valueAsDate = new Date();
-  document.getElementById('inbodyRecordDate').valueAsDate = new Date();
+  document.getElementById('inlineInbodyDate').valueAsDate = new Date();
 
   renderLatestInbodySummary();
 
@@ -506,41 +527,60 @@
     window.scrollTo(0, 0);
   }
 
-  /* --- 首頁獨立 InBody 卡片渲染 --- */
+  /* --- 首頁 InBody 最新數據展示 --- */
   function renderLatestInbodySummary() {
-    const container = document.getElementById('latestInbodySummary');
+    const gridContainer = document.getElementById('latestInbodySummaryGrid');
+    const dateContainer = document.getElementById('latestInbodyDate');
     const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
 
     if (inbodyLogs.length === 0) {
-      container.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <strong style="font-size:16px;">InBody 概況</strong>
-            <div style="font-size:13px; color:var(--hint); margin-top:2px;">尚無紀錄</div>
-          </div>
-          <button class="btn btn-outline btn-sm" onclick="showInbodyPage()">新增 / 歷史紀錄</button>
-        </div>
-      `;
+      dateContainer.textContent = '';
+      gridContainer.innerHTML = `<div style="font-size:13px; color:var(--hint); text-align:center; padding:10px 0;">尚無歷史紀錄</div>`;
       return;
     }
 
     inbodyLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
     const latest = inbodyLogs[0];
 
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <strong style="font-size:16px;">InBody 概況</strong>
-          <span style="font-size:12px; color:var(--hint); margin-left:8px;">${latest.date}</span>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="showInbodyPage()">新增 / 歷史紀錄</button>
-      </div>
+    dateContainer.textContent = `(${latest.date})`;
+    gridContainer.innerHTML = `
       <div class="inbody-grid">
         <div class="inbody-item"><div class="lbl">體重</div><div class="val">${latest.weight} <small style="font-size:10px;">kg</small></div></div>
         <div class="inbody-item"><div class="lbl">骨骼肌</div><div class="val">${latest.smm} <small style="font-size:10px;">kg</small></div></div>
         <div class="inbody-item"><div class="lbl">體脂率</div><div class="val">${latest.pbf} <small style="font-size:10px;">%</small></div></div>
       </div>
     `;
+  }
+
+  /* --- 首頁直存 InBody 紀錄 --- */
+  function saveInlineInbody() {
+    const date = document.getElementById('inlineInbodyDate').value;
+    const weight = parseFloat(document.getElementById('inlineInbodyWeight').value);
+    const smm = parseFloat(document.getElementById('inlineInbodySMM').value);
+    const pbf = parseFloat(document.getElementById('inlineInbodyPBF').value);
+
+    if (isNaN(weight) && isNaN(smm) && isNaN(pbf)) {
+      alert('請至少輸入一項 InBody 數據！');
+      return;
+    }
+
+    const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
+    inbodyLogs.push({
+      id: Date.now() + Math.random(),
+      date: date,
+      weight: isNaN(weight) ? '-' : weight,
+      smm: isNaN(smm) ? '-' : smm,
+      pbf: isNaN(pbf) ? '-' : pbf
+    });
+
+    localStorage.setItem('inbody_logs', JSON.stringify(inbodyLogs));
+    alert('InBody 紀錄儲存成功！');
+
+    document.getElementById('inlineInbodyWeight').value = '';
+    document.getElementById('inlineInbodySMM').value = '';
+    document.getElementById('inlineInbodyPBF').value = '';
+
+    renderLatestInbodySummary();
   }
 
   /* --- 重置與返回邏輯 --- */
@@ -686,6 +726,7 @@
     });
   }
 
+  /* 4. 第一組不要自動帶入數據， value 設為空白 */
   function renderSingleExerciseCard(container, ex) {
     const cardId = `ex-card-${Date.now()}-${Math.floor(Math.random()*1000)}`;
     const { lastLog, alertMessage } = getExerciseHistory(ex);
@@ -712,8 +753,8 @@
       <div class="sets-container">
         <div class="set-row">
           <span>1</span>
-          <input type="number" placeholder="重量 kg" class="weight-input" value="${lastLog?.sets[0]?.weight || ''}">
-          <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastLog?.sets[0]?.reps || ''}">
+          <input type="number" placeholder="重量 kg" class="weight-input" value="">
+          <input type="number" placeholder="次數 Reps" class="reps-input" value="">
         </div>
       </div>
 
@@ -809,7 +850,7 @@
     resetAndGoToStep1();
   }
 
-  /* --- 訓練歷史紀錄 --- */
+  /* --- 健身訓練歷史紀錄 --- */
   function showHistoryPage() {
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
     const select = document.getElementById('historyFilterSelect');
@@ -854,6 +895,7 @@
     sortedDates.forEach(date => {
       html += `<div class="card"><h3 style="margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px;">${date}</h3>`;
       groupedLogs[date].forEach(item => {
+        /* 3. 每一組獨立換行 */
         const setsFormatted = item.sets.map((s, i) => `組 ${i+1}: ${s.weight}kg × ${s.reps}下`).join('<br>');
         html += `
           <div class="history-item">
@@ -882,40 +924,10 @@
     }
   }
 
-  /* --- InBody 獨立專區 --- */
+  /* --- InBody 歷史紀錄專區 --- */
   function showInbodyPage() {
     renderInbodyHistory();
     switchPage('stepInbody');
-  }
-
-  function saveInbodyRecord() {
-    const date = document.getElementById('inbodyRecordDate').value;
-    const weight = parseFloat(document.getElementById('inbodyWeight').value);
-    const smm = parseFloat(document.getElementById('inbodySMM').value);
-    const pbf = parseFloat(document.getElementById('inbodyPBF').value);
-
-    if (isNaN(weight) && isNaN(smm) && isNaN(pbf)) {
-      alert('請至少輸入一項 InBody 數據！');
-      return;
-    }
-
-    const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
-    inbodyLogs.push({
-      id: Date.now() + Math.random(),
-      date: date,
-      weight: isNaN(weight) ? '-' : weight,
-      smm: isNaN(smm) ? '-' : smm,
-      pbf: isNaN(pbf) ? '-' : pbf
-    });
-
-    localStorage.setItem('inbody_logs', JSON.stringify(inbodyLogs));
-    alert('InBody 紀錄儲存成功！');
-
-    document.getElementById('inbodyWeight').value = '';
-    document.getElementById('inbodySMM').value = '';
-    document.getElementById('inbodyPBF').value = '';
-
-    renderInbodyHistory();
   }
 
   function renderInbodyHistory() {
@@ -937,7 +949,7 @@
             <strong style="font-size:16px;">${log.date}</strong>
             <button class="btn btn-danger-outline btn-sm" onclick="deleteInbodyLog(${log.id})">刪除</button>
           </div>
-          <div class="inbody-grid">
+          <div class="inbody-grid" style="margin-bottom:0;">
             <div class="inbody-item"><div class="lbl">體重</div><div class="val">${log.weight} <small style="font-size:10px;">kg</small></div></div>
             <div class="inbody-item"><div class="lbl">骨骼肌</div><div class="val">${log.smm} <small style="font-size:10px;">kg</small></div></div>
             <div class="inbody-item"><div class="lbl">體脂率</div><div class="val">${log.pbf} <small style="font-size:10px;">%</small></div></div>
