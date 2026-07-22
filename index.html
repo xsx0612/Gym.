@@ -65,13 +65,18 @@
       font-size: 20px;
     }
 
+    .header-btns {
+      display: flex;
+      gap: 8px;
+    }
+
     label {
       font-size: 14px;
       color: var(--hint);
       font-weight: 600;
     }
 
-    /* 按鈕樣式 (Flexbox 精準居中) */
+    /* 按鈕樣式 */
     .btn {
       display: flex;
       align-items: center;
@@ -114,14 +119,14 @@
 
     .btn-sm {
       height: 36px;
-      padding: 0 14px;
+      padding: 0 12px;
       font-size: 14px;
       width: auto;
       margin-top: 0;
       border-radius: 8px;
     }
 
-    /* 日期輸入框文字精準垂直水平居中 */
+    /* 日期與數字輸入框 */
     input[type="date"] {
       width: auto;
       display: inline-flex;
@@ -151,7 +156,43 @@
       background: var(--card);
     }
 
-    /* 部位按鈕 (Chips) 與粉色系區分 */
+    /* 首頁獨立 InBody 概況卡片 */
+    .inbody-summary-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .inbody-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .inbody-item {
+      background: #f9f9fb;
+      padding: 10px 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .inbody-item .val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
+    .inbody-item .lbl {
+      font-size: 12px;
+      color: var(--hint);
+    }
+
+    /* 部位按鈕 (Chips) */
     .chip-group {
       display: flex;
       gap: 10px;
@@ -174,7 +215,6 @@
       border: 1px solid transparent;
     }
 
-    /* 粉色系指定顏色 */
     .chip-chest { background: var(--part-chest); color: var(--part-chest-text); }
     .chip-chest.active { background: #1a5fb4; color: #ffffff; }
 
@@ -187,7 +227,7 @@
     .chip-arm { background: var(--part-arm); color: var(--part-arm-text); }
     .chip-arm.active { background: #26a269; color: #ffffff; }
 
-    /* 動作選單與部位標籤 */
+    /* 動作選單與標籤 */
     .exercise-list {
       display: flex;
       flex-direction: column;
@@ -241,7 +281,6 @@
       line-height: 1.5;
     }
 
-    /* 需要突破的動作醒目標記 (粉紅色底) */
     .alert-box {
       background: var(--alert-bg);
       border: 1px solid var(--alert-border);
@@ -253,22 +292,29 @@
       font-weight: 600;
     }
 
+    /* 組數橫向不換行設計 */
     .set-row {
       display: flex;
       gap: 10px;
       align-items: center;
       margin-bottom: 10px;
+      white-space: nowrap;
     }
 
     .set-row span {
-      width: 55px;
-      font-weight: 600;
-      font-size: 14px;
+      width: 24px;
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 16px;
       color: var(--hint);
+      text-align: center;
+      white-space: nowrap;
     }
 
     .set-row input {
+      flex: 1;
       text-align: center;
+      min-width: 0;
     }
 
     .step-page {
@@ -278,17 +324,52 @@
     .step-page.active {
       display: block;
     }
+
+    .inbody-input-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* 歷史紀錄條目樣式 */
+    .history-item {
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .history-sets-list {
+      font-size: 14px;
+      color: #48484a;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
 
-  <!-- STEP 1: 選擇日期與部位 -->
+  <!-- STEP 1: 選擇日期與部位 + 下方獨立 InBody 卡片 -->
   <div id="step1" class="step-page active">
     <div class="header-bar">
       <h2>健身訓練紀錄</h2>
-      <button class="btn btn-secondary btn-sm" onclick="showHistoryPage()">歷史紀錄</button>
+      <div class="header-btns">
+        <button class="btn btn-secondary btn-sm" onclick="showInbodyPage()">InBody 紀錄</button>
+        <button class="btn btn-secondary btn-sm" onclick="showHistoryPage()">歷史紀錄</button>
+      </div>
     </div>
 
+    <!-- 訓練選擇卡片 -->
     <div class="card">
       <div>
         <label>訓練日期</label><br>
@@ -306,6 +387,11 @@
       </div>
 
       <button class="btn" style="margin-top: 24px;" onclick="goToStep2()">下一步：選擇動作</button>
+    </div>
+
+    <!-- 下方獨立 InBody 概況卡片 -->
+    <div class="inbody-summary-card" id="latestInbodySummary">
+      <!-- 由 JS 動態渲染 -->
     </div>
   </div>
 
@@ -343,7 +429,7 @@
     <button class="btn" style="margin-bottom: 50px; background: #34c759;" onclick="saveAllLogs()">完成並儲存訓練</button>
   </div>
 
-  <!-- STEP 4: 歷史紀錄頁 -->
+  <!-- STEP 4: 訓練歷史紀錄頁 -->
   <div id="stepHistory" class="step-page">
     <div class="header-bar">
       <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回首頁</button>
@@ -361,6 +447,42 @@
     <div id="historyLogsContainer"></div>
   </div>
 
+  <!-- STEP 5: 獨立 InBody 紀錄專區 -->
+  <div id="stepInbody" class="step-page">
+    <div class="header-bar">
+      <button class="btn btn-secondary btn-sm" onclick="goToStep1()">返回首頁</button>
+      <h2>InBody 數據管理</h2>
+      <div style="width: 60px;"></div>
+    </div>
+
+    <!-- 新增 InBody 數據卡片 -->
+    <div class="card">
+      <h3 style="margin: 0 0 12px 0;">新增 InBody 紀錄</h3>
+      <label>量測日期</label><br>
+      <input type="date" id="inbodyRecordDate">
+
+      <div class="inbody-input-grid">
+        <div>
+          <label>體重 (kg)</label>
+          <input type="number" step="0.1" id="inbodyWeight" placeholder="例如: 70.5">
+        </div>
+        <div>
+          <label>骨骼肌 (kg)</label>
+          <input type="number" step="0.1" id="inbodySMM" placeholder="例如: 32.1">
+        </div>
+        <div>
+          <label>體脂率 (%)</label>
+          <input type="number" step="0.1" id="inbodyPBF" placeholder="例如: 18.5">
+        </div>
+      </div>
+
+      <button class="btn" style="margin-top: 16px;" onclick="saveInbodyRecord()">儲存 InBody 紀錄</button>
+    </div>
+
+    <!-- InBody 歷史列表 -->
+    <div id="inbodyHistoryContainer"></div>
+  </div>
+
 <script>
   const defaultLibrary = {
     '胸': ['槓鈴臥推', '啞鈴上斜臥推', '雙槓體撐', '繩索飛鳥'],
@@ -374,11 +496,51 @@
   let selectedExercises = [];
 
   document.getElementById('workoutDate').valueAsDate = new Date();
+  document.getElementById('inbodyRecordDate').valueAsDate = new Date();
+
+  renderLatestInbodySummary();
 
   function switchPage(pageId) {
     document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
     window.scrollTo(0, 0);
+  }
+
+  /* --- 首頁獨立 InBody 卡片渲染 --- */
+  function renderLatestInbodySummary() {
+    const container = document.getElementById('latestInbodySummary');
+    const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
+
+    if (inbodyLogs.length === 0) {
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="font-size:16px;">InBody 概況</strong>
+            <div style="font-size:13px; color:var(--hint); margin-top:2px;">尚無紀錄</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="showInbodyPage()">新增 / 歷史紀錄</button>
+        </div>
+      `;
+      return;
+    }
+
+    inbodyLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
+    const latest = inbodyLogs[0];
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong style="font-size:16px;">InBody 概況</strong>
+          <span style="font-size:12px; color:var(--hint); margin-left:8px;">${latest.date}</span>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="showInbodyPage()">新增 / 歷史紀錄</button>
+      </div>
+      <div class="inbody-grid">
+        <div class="inbody-item"><div class="lbl">體重</div><div class="val">${latest.weight} <small style="font-size:10px;">kg</small></div></div>
+        <div class="inbody-item"><div class="lbl">骨骼肌</div><div class="val">${latest.smm} <small style="font-size:10px;">kg</small></div></div>
+        <div class="inbody-item"><div class="lbl">體脂率</div><div class="val">${latest.pbf} <small style="font-size:10px;">%</small></div></div>
+      </div>
+    `;
   }
 
   /* --- 重置與返回邏輯 --- */
@@ -388,10 +550,12 @@
     document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
     document.getElementById('workoutFormContainer').innerHTML = '';
     document.getElementById('exerciseChecklist').innerHTML = '';
+    renderLatestInbodySummary();
     switchPage('step1');
   }
 
   function goToStep1() {
+    renderLatestInbodySummary();
     switchPage('step1');
   }
 
@@ -522,14 +686,13 @@
     });
   }
 
-  // 渲染單個動作卡片
   function renderSingleExerciseCard(container, ex) {
     const cardId = `ex-card-${Date.now()}-${Math.floor(Math.random()*1000)}`;
     const { lastLog, alertMessage } = getExerciseHistory(ex);
 
     let historyHTML = lastLog 
       ? `<div class="history-box">上次紀錄 (${lastLog.date})：<br>` + 
-        lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join(' | ') + `</div>`
+        lastLog.sets.map((s, i) => `第 ${i+1} 組：${s.weight} kg × ${s.reps} 下`).join('<br>') + `</div>`
       : `<div class="history-box">尚未有此動作歷史紀錄</div>`;
 
     let alertHTML = alertMessage ? `<div class="alert-box">${alertMessage}</div>` : '';
@@ -548,7 +711,7 @@
       
       <div class="sets-container">
         <div class="set-row">
-          <span>第 1 組</span>
+          <span>1</span>
           <input type="number" placeholder="重量 kg" class="weight-input" value="${lastLog?.sets[0]?.weight || ''}">
           <input type="number" placeholder="次數 Reps" class="reps-input" value="${lastLog?.sets[0]?.reps || ''}">
         </div>
@@ -560,7 +723,6 @@
     container.appendChild(card);
   }
 
-  // 在 Step 3 移除單個動作卡片
   function removeExerciseCard(cardId, exName) {
     if (confirm(`確定要從今日菜單移除「${exName}」嗎？`)) {
       const card = document.getElementById(cardId);
@@ -570,7 +732,6 @@
     }
   }
 
-  // 在 Step 3 臨時加練動作
   function addTempExerciseInStep3() {
     let availableExercises = [];
     selectedParts.forEach(p => {
@@ -608,7 +769,7 @@
     const newRow = document.createElement('div');
     newRow.className = 'set-row';
     newRow.innerHTML = `
-      <span>第 ${currentSets} 組</span>
+      <span>${currentSets}</span>
       <input type="number" placeholder="重量 kg" class="weight-input" value="">
       <input type="number" placeholder="次數 Reps" class="reps-input" value="">
     `;
@@ -648,6 +809,7 @@
     resetAndGoToStep1();
   }
 
+  /* --- 訓練歷史紀錄 --- */
   function showHistoryPage() {
     const allLogs = JSON.parse(localStorage.getItem('gym_logs')) || [];
     const select = document.getElementById('historyFilterSelect');
@@ -692,15 +854,18 @@
     sortedDates.forEach(date => {
       html += `<div class="card"><h3 style="margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px;">${date}</h3>`;
       groupedLogs[date].forEach(item => {
-        html += `<div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <strong>${item.exercise}</strong>
-            <div style="font-size: 14px; color: #48484a; margin-top: 4px;">
-              ${item.sets.map((s, i) => `組 ${i+1}: ${s.weight}kg × ${s.reps}下`).join(' | ')}
+        const setsFormatted = item.sets.map((s, i) => `組 ${i+1}: ${s.weight}kg × ${s.reps}下`).join('<br>');
+        html += `
+          <div class="history-item">
+            <div class="history-item-header">
+              <strong style="font-size:16px;">${item.exercise}</strong>
+              <button class="btn btn-danger-outline btn-sm" onclick="deleteHistoryLog(${item.id})">刪除</button>
+            </div>
+            <div class="history-sets-list">
+              ${setsFormatted}
             </div>
           </div>
-          <button class="btn btn-danger-outline btn-sm" onclick="deleteHistoryLog(${item.id})">刪除</button>
-        </div>`;
+        `;
       });
       html += `</div>`;
     });
@@ -714,6 +879,82 @@
       allLogs = allLogs.filter(log => log.id !== logId);
       localStorage.setItem('gym_logs', JSON.stringify(allLogs));
       showHistoryPage();
+    }
+  }
+
+  /* --- InBody 獨立專區 --- */
+  function showInbodyPage() {
+    renderInbodyHistory();
+    switchPage('stepInbody');
+  }
+
+  function saveInbodyRecord() {
+    const date = document.getElementById('inbodyRecordDate').value;
+    const weight = parseFloat(document.getElementById('inbodyWeight').value);
+    const smm = parseFloat(document.getElementById('inbodySMM').value);
+    const pbf = parseFloat(document.getElementById('inbodyPBF').value);
+
+    if (isNaN(weight) && isNaN(smm) && isNaN(pbf)) {
+      alert('請至少輸入一項 InBody 數據！');
+      return;
+    }
+
+    const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
+    inbodyLogs.push({
+      id: Date.now() + Math.random(),
+      date: date,
+      weight: isNaN(weight) ? '-' : weight,
+      smm: isNaN(smm) ? '-' : smm,
+      pbf: isNaN(pbf) ? '-' : pbf
+    });
+
+    localStorage.setItem('inbody_logs', JSON.stringify(inbodyLogs));
+    alert('InBody 紀錄儲存成功！');
+
+    document.getElementById('inbodyWeight').value = '';
+    document.getElementById('inbodySMM').value = '';
+    document.getElementById('inbodyPBF').value = '';
+
+    renderInbodyHistory();
+  }
+
+  function renderInbodyHistory() {
+    const container = document.getElementById('inbodyHistoryContainer');
+    const inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
+
+    if (inbodyLogs.length === 0) {
+      container.innerHTML = `<div class="card"><p style="text-align:center; color:var(--hint);">尚無 InBody 歷史紀錄</p></div>`;
+      return;
+    }
+
+    inbodyLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    let html = '';
+    inbodyLogs.forEach(log => {
+      html += `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <strong style="font-size:16px;">${log.date}</strong>
+            <button class="btn btn-danger-outline btn-sm" onclick="deleteInbodyLog(${log.id})">刪除</button>
+          </div>
+          <div class="inbody-grid">
+            <div class="inbody-item"><div class="lbl">體重</div><div class="val">${log.weight} <small style="font-size:10px;">kg</small></div></div>
+            <div class="inbody-item"><div class="lbl">骨骼肌</div><div class="val">${log.smm} <small style="font-size:10px;">kg</small></div></div>
+            <div class="inbody-item"><div class="lbl">體脂率</div><div class="val">${log.pbf} <small style="font-size:10px;">%</small></div></div>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  function deleteInbodyLog(logId) {
+    if (confirm('確定要刪除這筆 InBody 紀錄嗎？')) {
+      let inbodyLogs = JSON.parse(localStorage.getItem('inbody_logs')) || [];
+      inbodyLogs = inbodyLogs.filter(log => log.id !== logId);
+      localStorage.setItem('inbody_logs', JSON.stringify(inbodyLogs));
+      renderInbodyHistory();
     }
   }
 </script>
